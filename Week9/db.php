@@ -1,24 +1,64 @@
 <?php
 
-$servername = "localhost";  // server yang kita gunakan adalah localhost
+// buat class database dan fungsinya agar dapat digunakan sebagai objek
 
-$username = "root";         // username default adalah root, gunakan user lain yang anda setting jika ada
+class Database
 
-$password = "";             // password default adalah kosong, gunakan password yang anda setting jika ada
+{
 
-$dbname = "course_backend_db"; // kita terhubung pada basis data yang sudah kita buat sebelumnya yaitu course_backend_db
+   function execute($query) // fungsi execute digunakan untuk menjalankan query dan mengembalikan status berhasil atau gagal dari query tersebut (true/false)
 
- 
+   {
 
-// Create connection
+       include("config.php");
 
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+       if (mysqli_query($conn, $query)) {
 
-// Check connection
+           mysqli_close($conn);       
 
-if (!$conn) {
+           return true;
 
-   die("Connection failed: " . mysqli_connect_error()); // jika gagal, maka akan koneksi akan dihentikan
+       }       
+
+       mysqli_close($conn);       
+
+       return false;
+
+   }
+
+   function get($query) // fungsi get digunakan untuk menjalankan query dan mengembalikan data dari query jika berhasil dan null jika gagal
+
+   {
+
+       include("database_connect.php");       
+
+       $result = $conn->query($query);
+
+       if ($result->num_rows > 0)
+
+       {
+
+           $conn->close();
+
+           return $result;
+
+       }
+
+       $conn->close();
+
+       return null;
+
+   }
+
+   function get_procedure_execute($procedure) // fungsi execute digunakan untuk menjalankan procedure dan mengembalikan status berhasil atau gagal dari query tersebut (true/false)
+
+   {
+
+       include("database_connect.php");
+
+       return mysqli_query($conn,"CALL ".$procedure);
+
+   }   
 
 }
 
